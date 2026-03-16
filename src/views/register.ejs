@@ -1,0 +1,50 @@
+<%- include('partials/header') %>
+
+<div class="auth-wrapper">
+
+  <div class="auth-card">
+
+    <div class="logo">APT</div>
+
+    <h2 class="title">
+      Create Account
+    </h2>
+
+    <p class="subtitle">
+      Start adaptive algorithm training.
+    </p>
+
+    <form method="POST" action="/register">
+
+      <input
+        type="text"
+        name="username"
+        placeholder="Username"
+        class="input"
+        required
+      />
+
+      <input
+        type="password"
+        name="password"
+        placeholder="Password"
+        class="input"
+        required
+      />
+
+      <button class="btn-primary">
+        Register
+      </button>
+
+    </form>
+
+    <p class="switch">
+      Already registered?
+      <a href="/">Login</a>
+    </p>
+
+  </div>
+
+</div>
+
+<%- include('partials/footer') %>

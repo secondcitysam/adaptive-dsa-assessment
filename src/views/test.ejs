@@ -1,0 +1,194 @@
+<%- include('partials/header') %>
+
+<div class="test-wrapper">
+
+<div class="test-card">
+
+<div class="progress-header">
+<span id="progressText">
+Question 1 / <%= test.questions.length %>
+</span>
+</div>
+
+<form id="testForm" action="/submit-test" method="POST">
+
+<input type="hidden" name="testId" value="<%= test.id %>">
+
+<% test.questions.forEach((q,index)=>{ %>
+
+<div 
+class="question-view"
+data-index="<%= index %>"
+style="<%= index === 0 ? '' : 'display:none' %>"
+>
+
+<h2 class="question-title">
+<%= q.title %>
+</h2>
+
+<p class="question-desc">
+<%= q.description %>
+</p>
+
+<div class="answer-grid">
+
+<label class="answer-card">
+<input type="radio" name="q_<%= q.id %>" value="two-pointer">
+Two Pointer
+</label>
+
+<label class="answer-card">
+<input type="radio" name="q_<%= q.id %>" value="hashmap">
+HashMap
+</label>
+
+<label class="answer-card">
+<input type="radio" name="q_<%= q.id %>" value="prefix-sum">
+Prefix Sum
+</label>
+
+<label class="answer-card">
+<input type="radio" name="q_<%= q.id %>" value="sliding-window">
+Sliding Window
+</label>
+
+<label class="answer-card">
+<input type="radio" name="q_<%= q.id %>" value="kadane">
+Kadane
+</label>
+
+<label class="answer-card">
+<input type="radio" name="q_<%= q.id %>" value="math">
+Math
+</label>
+
+<label class="answer-card">
+<input type="radio" name="q_<%= q.id %>" value="string">
+String Manipulation
+</label>
+
+<label class="answer-card">
+<input type="radio" name="q_<%= q.id %>" value="bit">
+Bit Manipulation
+</label>
+
+<label class="answer-card">
+<input type="radio" name="q_<%= q.id %>" value="linked-list">
+Linked List
+</label>
+
+</div>
+
+</div>
+
+<% }) %>
+
+<div class="nav-buttons">
+
+<button type="button" id="prevBtn">
+Previous
+</button>
+
+<button type="button" id="nextBtn">
+Next
+</button>
+
+<button type="submit" id="submitBtn">
+Submit
+</button>
+
+</div>
+
+</form>
+
+</div>
+
+</div>
+
+<script>
+
+const questions = document.querySelectorAll(".question-view")
+let current = 0
+
+const progressText = document.getElementById("progressText")
+
+function showQuestion(index){
+
+questions.forEach(q=>q.style.display="none")
+
+questions[index].style.display="block"
+
+progressText.innerText = 
+"Question " + (index+1) + " / " + questions.length
+
+}
+
+/* navigation buttons */
+
+document.getElementById("nextBtn").onclick = ()=>{
+
+if(current < questions.length-1){
+current++
+showQuestion(current)
+}
+
+}
+
+document.getElementById("prevBtn").onclick = ()=>{
+
+if(current > 0){
+current--
+showQuestion(current)
+}
+
+}
+
+/* keyboard navigation */
+
+document.addEventListener("keydown",(e)=>{
+
+if(e.key === "ArrowRight"){
+document.getElementById("nextBtn").click()
+}
+
+if(e.key === "ArrowLeft"){
+document.getElementById("prevBtn").click()
+}
+
+/* quick select options 1-9 */
+
+if(e.key >= "1" && e.key <= "9"){
+
+const cards = questions[current].querySelectorAll("input[type=radio]")
+
+const index = parseInt(e.key) - 1
+
+if(cards[index]){
+cards[index].checked = true
+}
+
+}
+
+})
+
+/* highlight selected answer */
+
+document.querySelectorAll(".answer-card input").forEach(input => {
+
+input.addEventListener("change",()=>{
+
+const parent = input.closest(".answer-grid")
+
+parent.querySelectorAll(".answer-card").forEach(c=>{
+c.classList.remove("selected")
+})
+
+input.parentElement.classList.add("selected")
+
+})
+
+})
+
+</script>
+
+<%- include('partials/footer') %>

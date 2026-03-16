@@ -1,0 +1,64 @@
+<%- include('partials/header') %>
+
+<div class="container py-5">
+
+<div class="d-flex justify-content-between mb-4">
+
+<h2 class="text-light">
+Welcome <%= user.username %>
+</h2>
+
+<form action="/logout" method="POST">
+<button class="btn btn-outline-info">
+Logout
+</button>
+</form>
+
+</div>
+
+<div class="card bg-dark border-0 p-4 mb-4">
+
+<h4 class="mb-4 text-info">
+Algorithm Pattern Skills
+</h4>
+
+<% Object.keys(user.topicPerformance).forEach(topic => { 
+const data = user.topicPerformance[topic];
+const percent = data.total === 0 ? 0 : Math.floor((data.correct / data.total) * 100);
+%>
+
+<div class="mb-3">
+
+<div class="d-flex justify-content-between">
+<span><%= topic %></span>
+<span><%= percent %>%</span>
+</div>
+
+<div class="progress bg-secondary">
+<div 
+class="progress-bar bg-info"
+style="width: <%= percent %>%">
+</div>
+</div>
+
+</div>
+
+<% }) %>
+
+</div>
+
+<div class="text-center">
+
+<form action="/start-test" method="POST">
+    
+<button class="btn btn-lg btn-info px-5">
+Start Adaptive Test
+</button>
+
+</form>
+
+</div>
+
+</div>
+
+<%- include('partials/footer') %>

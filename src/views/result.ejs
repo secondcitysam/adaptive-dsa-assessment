@@ -1,0 +1,138 @@
+<%- include('partials/header') %>
+
+<div class="result-wrapper">
+
+<div class="result-card">
+
+<h2 class="mb-4 text-info">
+Test Result
+</h2>
+
+<!-- SCORE SECTION -->
+
+<div class="score-box">
+
+<h1>
+<%= test.score %> / <%= test.questions.length %>
+</h1>
+
+<p>
+Accuracy: <%= Math.floor(test.percentage) %>%
+</p>
+
+</div>
+
+
+<!-- PATTERN PERFORMANCE -->
+
+<div class="mt-4">
+
+<h4 class="text-light mb-3">
+Pattern Performance
+</h4>
+
+<% Object.keys(user.topicPerformance).forEach(topic => {
+
+const data = user.topicPerformance[topic];
+const percent = data.total === 0
+? 0
+: Math.floor((data.correct/data.total)*100);
+
+%>
+
+<div class="mb-3">
+
+<div class="d-flex justify-content-between">
+<span><%= topic %></span>
+<span><%= percent %>%</span>
+</div>
+
+<div class="progress bg-secondary">
+
+<div
+class="progress-bar bg-info"
+style="width:<%= percent %>%">
+</div>
+
+</div>
+
+</div>
+
+<% }) %>
+
+</div>
+
+
+<!-- PATTERN HINT SYSTEM -->
+
+<div class="mt-5">
+
+<h4 class="text-warning mb-3">
+Pattern Insights
+</h4>
+
+<% if(hints && hints.length === 0){ %>
+
+<p class="text-success">
+Great job! No weak patterns detected.
+</p>
+
+<% } %>
+
+
+<% if(hints && hints.length > 0){ %>
+
+<% hints.forEach(h => { %>
+
+<div class="hint-card mb-4">
+
+<h5 class="text-warning">
+<%= h.topic %>
+</h5>
+
+<p class="hint-text">
+<%= h.hint.useWhen %>
+</p>
+
+<ul class="hint-list">
+
+<% h.hint.signals.forEach(signal => { %>
+
+<li><%= signal %></li>
+
+<% }) %>
+
+</ul>
+
+</div>
+
+<% }) %>
+
+<% } %>
+
+</div>
+
+
+<!-- NAVIGATION -->
+
+<div class="mt-5 text-center">
+
+<a href="/dashboard" class="btn btn-info me-3">
+Back to Dashboard
+</a>
+
+<form action="/start-test" method="POST" style="display:inline;">
+
+<button class="btn btn-outline-light">
+Try Another Adaptive Test
+</button>
+
+</form>
+
+</div>
+
+</div>
+
+</div>
+
+<%- include('partials/footer') %>
