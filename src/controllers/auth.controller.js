@@ -1,87 +1,41 @@
-const QuestionModel = require('../models/question.model');
-const TestModel = require('../models/test.model');
 const UserModel = require('../models/user.model');
 
-const { calculateNewDifficulty } =
-  require('../utils/adaptive.utils');
 
-const {
-  updateTopicPerformance,
-  getWeakTopics
-} = require('../utils/topicAdaptive.utils');
+/* =========================
+REGISTER USER
+========================= */
 
-
-
-exports.startTest = (req, res, next) => {
+exports.registerUser = async (req, res, next) => {
   try {
-    const user = req.user;
-    const difficulty = user.currentDifficulty;
 
- 
-    const questions =
-      QuestionModel.getQuestionsByDifficulty(
-        difficulty
-      );
+    const { username, password } = req.body;
 
-    if (!questions.length) {
-      return res.status(404).json({
+    if (!username || !password) {
+      return res.status(400).json({
         success: false,
-        message: "No questions available"
+        message: "Username and password required"
       });
     }
 
+    const existingUser =
+      await UserModel.findUserByUsername(username);
 
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: "User already exists"
+      });
+    }
 
+    const user =
+      await UserModel.createUser(username, password);
 
-
-const weakTopics = getWeakTopics(user);
-
-
-let prioritized = questions.filter(q =>
-  weakTopics.includes(q.topic)
-);
-
-
-let others = questions.filter(
-  q => !weakTopics.includes(q.topic)
-);
-
-
-const shuffle = arr =>
-  arr.sort(() => Math.random() - 0.5);
-
-prioritized = shuffle(prioritized);
-others = shuffle(others);
-
-
-const selectedQuestions = [
-  ...prioritized.slice(0, 1),
-  ...others.slice(0, 1)
-];
-
-
-
-
-
-    const test = TestModel.createTest(
-      user.id,
-      selectedQuestions,
-      difficulty
-    );
-
-    res.status(200).json({
+    res.status(201).json({
       success: true,
-      message: "Test started",
+      message: "User registered successfully",
       data: {
-        testId: test.id,
-        difficulty,
-        weakTopics,
-        questions: selectedQuestions.map(q => ({
-          id: q.id,
-          title: q.title,
-          description: q.description,
-          topic: q.topic
-        }))
+        userId: user.id,
+        difficulty: user.current_difficulty || 1
       }
     });
 
@@ -92,88 +46,93 @@ const selectedQuestions = [
 
 
 
+/* =========================
+LOGIN USER
+========================= */
 
-
-
-
-exports.submitTest = (req, res, next) => {
+exports.loginUser = async (req, res, next) => {
   try {
-    const { testId, answers } = req.body;
 
-    const test = TestModel.findTestById(testId);
+    const { username, password } = req.body;
 
-    if (!test) {
-      return res.status(404).json({
+    const user =
+      await UserModel.findUserByUsername(username);
+
+    if (!user || user.password !== password) {
+      return res.status(401).json({
         success: false,
-        message: "Test not found"
+        message: "Invalid credentials"
       });
     }
 
-    let score = 0;
-
-    test.questions.forEach(question => {
-      const submitted = answers.find(
-        a => a.questionId === question.id
-      );
-
-      if (
-        submitted &&
-        submitted.answer === question.correctAnswer
-      ) {
-        score++;
+    res.status(200).json({
+      success: true,
+      message: "Login successful",
+      data: {
+        userId: user.id,
+        difficulty: user.current_difficulty
       }
     });
 
-    const percentage =
-      (score / test.questions.length) * 100;
+  } catch (error) {
+    next(error);
+  }
+};
 
 
 
+/* =========================
+UPDATE PASSWORD
+========================= */
 
+exports.updatePassword = async (req, res, next) => {
+  try {
 
-    const user = UserModel.findUserById(
-      test.userId
-    );
+    const { username, newPassword } = req.body;
 
-    updateTopicPerformance(
-      user,
-      test.questions,
-      answers
-    );
+    if (!username || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Username and new password required"
+      });
+    }
 
+    const user =
+      await UserModel.updatePassword(username, newPassword);
 
-
-
-
-    const newDifficulty =
-      calculateNewDifficulty(
-        test.previousDifficulty,
-        percentage
-      );
-
-    UserModel.updateDifficulty(
-      test.userId,
-      newDifficulty
-    );
-
-    TestModel.updateTestResult(
-      testId,
-      score,
-      percentage,
-      newDifficulty
-    );
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      });
+    }
 
     res.status(200).json({
       success: true,
-      message: "Test submitted",
+      message: "Password updated successfully"
+    });
+
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+
+/* =========================
+GET PERFORMANCE
+========================= */
+
+exports.getPerformance = async (req, res, next) => {
+  try {
+
+    const user = req.user;
+
+    res.status(200).json({
+      success: true,
       data: {
-        score,
-        percentage,
-        previousDifficulty:
-          test.previousDifficulty,
-        newDifficulty,
-        topicPerformance:
-          user.topicPerformance
+        difficulty: user.current_difficulty,
+        topicPerformance: user.topicPerformance
       }
     });
 
