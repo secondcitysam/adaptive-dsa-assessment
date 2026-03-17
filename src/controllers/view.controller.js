@@ -284,6 +284,22 @@ exports.submitTest = async (req,res)=>{
 
   const user = await UserModel.findUserById(test.userId);
 
+  const result = await pool.query(
+  "SELECT topic, correct, total FROM topic_performance WHERE user_id=$1",
+  [user.id]
+);
+
+const topicPerformance = {};
+
+result.rows.forEach(row => {
+  topicPerformance[row.topic] = {
+    correct: row.correct,
+    total: row.total
+  };
+});
+
+user.topicPerformance = topicPerformance;
+
   const answers = [];
 
   test.questions.forEach(q => {
