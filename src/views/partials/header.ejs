@@ -22,19 +22,32 @@ rel="stylesheet"
 HEADER NAVBAR
 =============================== -->
 
-<nav class="navbar navbar-expand-lg navbar-dark glass-nav">
+<nav class="navbar navbar-dark glass-nav">
 
-<div class="container">
+<div class="container d-flex justify-content-between align-items-center py-3">
 
-<!-- LOGO -->
-<a class="navbar-brand fw-bold text-info" href="/dashboard">
-Logic Gap - DSA
-</a>
+<!-- LEFT: APP IDENTITY -->
+<div>
+    <div class="fw-bold text-info fs-5">
+        LOGIC GAP
+    </div>
+    <div class="small text-light">
+        Adaptive Pattern Trainer · DSA
+    </div>
+</div>
 
-<!-- RIGHT SIDE -->
+<!-- CENTER: USER CONTEXT -->
+<div class="text-center">
+    <div class="text-light small">
+        Welcome
+    </div>
+    <div class="fw-semibold text-info">
+        <%= user.username %>
+    </div>
+</div>
+
+<!-- RIGHT: ACTIONS -->
 <div class="d-flex align-items-center gap-3">
-
-<a href="/dashboard" class="nav-link text-light">Dashboard</a>
 
 <form action="/start-test" method="POST">
 <button class="btn btn-sm btn-info px-3">
