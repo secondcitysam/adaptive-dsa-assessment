@@ -121,9 +121,8 @@ exports.testPage = (req,res)=>{
     return res.redirect("/dashboard");
   }
 
-  res.render("test",{
-    test
-  });
+  res.render("test",{ test });
+
 };
 
 
@@ -136,11 +135,9 @@ exports.resultPage = async (req,res)=>{
 
   const testId = req.params.id;
 
-  const test =
-    TestModel.findTestById(testId);
+  const test = TestModel.findTestById(testId);
 
-  const user =
-    await UserModel.findUserById(test.userId);
+  const user = await UserModel.findUserById(test.userId);
 
   const result = await pool.query(
     "SELECT topic, correct, total FROM topic_performance WHERE user_id=$1",
@@ -160,7 +157,7 @@ exports.resultPage = async (req,res)=>{
 
   const weakTopics = [];
 
-  Object.keys(user.topicPerformance).forEach(topic => {
+  Object.keys(user.topicPerformance || {}).forEach(topic => {
 
     const data = user.topicPerformance[topic];
 
@@ -215,8 +212,7 @@ exports.startTest = async (req,res)=>{
     return res.redirect("/");
   }
 
-  const user =
-    await UserModel.findUserById(userId);
+  const user = await UserModel.findUserById(userId);
 
   const difficulty =
     user.current_difficulty || user.currentDifficulty;
@@ -228,14 +224,10 @@ exports.startTest = async (req,res)=>{
     await getWeakTopics(userId);
 
   let prioritized =
-    questions.filter(q =>
-      weakTopics.includes(q.topic)
-    );
+    questions.filter(q => weakTopics.includes(q.topic));
 
   let others =
-    questions.filter(q =>
-      !weakTopics.includes(q.topic)
-    );
+    questions.filter(q => !weakTopics.includes(q.topic));
 
   const shuffle = arr =>
     arr.sort(() => Math.random() - 0.5);
@@ -243,10 +235,25 @@ exports.startTest = async (req,res)=>{
   prioritized = shuffle(prioritized);
   others = shuffle(others);
 
-  const selectedQuestions = [
+  let selectedQuestions = [
     ...prioritized.slice(0,2),
     ...others.slice(0,1)
   ];
+
+  /* ensure minimum 3 questions */
+
+  if(selectedQuestions.length < 3){
+
+    const remaining = questions.filter(
+      q => !selectedQuestions.includes(q)
+    );
+
+    selectedQuestions = [
+      ...selectedQuestions,
+      ...remaining.slice(0,3-selectedQuestions.length)
+    ];
+
+  }
 
   const test =
     TestModel.createTest(
@@ -269,15 +276,13 @@ exports.submitTest = async (req,res)=>{
 
   const { testId } = req.body;
 
-  const test =
-    TestModel.findTestById(testId);
+  const test = TestModel.findTestById(testId);
 
   if(!test){
     return res.redirect("/dashboard");
   }
 
-  const user =
-    await UserModel.findUserById(test.userId);
+  const user = await UserModel.findUserById(test.userId);
 
   const answers = [];
 
