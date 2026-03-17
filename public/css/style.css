@@ -1,10 +1,67 @@
+/* ===============================
+GLOBAL BASE
+=============================== */
+
 body{
-background:#0b0f19;
-font-family:system-ui;
+background: radial-gradient(circle at 20% 20%, #0f172a, #020617);
+font-family: -apple-system, BlinkMacSystemFont, sans-serif;
 color:#e2e8f0;
+overflow-x:hidden;
+animation: fadeIn 0.6s ease;
 }
 
-/* center screen */
+*{
+transition: all 0.25s ease;
+}
+
+/* ===============================
+LAYOUT FIX (IMPORTANT)
+=============================== */
+
+.container {
+max-width: 1100px;
+margin: 0 auto;
+}
+
+.container.py-5{
+display:flex;
+flex-direction:column;
+align-items:center;
+}
+
+.container .card{
+width:100%;
+max-width:800px;
+}
+
+/* ===============================
+GLASS SYSTEM
+=============================== */
+
+.auth-card,
+.test-card,
+.result-card,
+.card{
+background: rgba(17,24,39,0.65);
+backdrop-filter: blur(18px);
+-webkit-backdrop-filter: blur(18px);
+border:1px solid rgba(255,255,255,0.06);
+border-radius:18px;
+box-shadow:
+0 10px 40px rgba(0,0,0,0.6),
+inset 0 1px 0 rgba(255,255,255,0.04);
+}
+
+.auth-card:hover,
+.test-card:hover,
+.result-card:hover{
+transform: translateY(-4px) scale(1.01);
+box-shadow:0 25px 70px rgba(0,0,0,0.8);
+}
+
+/* ===============================
+AUTH PAGE
+=============================== */
 
 .auth-wrapper{
 height:100vh;
@@ -13,34 +70,23 @@ align-items:center;
 justify-content:center;
 }
 
-/* card */
-
 .auth-card{
-width:420px;
-background:#111827;
+width:100%;
+max-width:420px;
 padding:48px;
-border-radius:18px;
-box-shadow:0 25px 60px rgba(0,0,0,0.6);
 text-align:center;
 }
 
-/* logo */
-
 .logo{
-font-size:32px;
+font-size:34px;
 font-weight:700;
 color:#22d3ee;
-margin-bottom:10px;
 }
-
-/* title */
 
 .title{
-font-size:24px;
+font-size:26px;
 margin-bottom:6px;
 }
-
-/* subtitle */
 
 .subtitle{
 color:#94a3b8;
@@ -48,83 +94,103 @@ font-size:14px;
 margin-bottom:30px;
 }
 
-/* inputs */
+/* ===============================
+INPUTS
+=============================== */
 
 .input{
 width:100%;
-background:#020617;
-border:1px solid #1e293b;
-padding:12px;
+background: rgba(2,6,23,0.7);
+border:1px solid rgba(255,255,255,0.08);
+padding:14px;
 margin-bottom:16px;
-border-radius:8px;
+border-radius:10px;
 color:white;
 }
 
 .input:focus{
 outline:none;
 border-color:#22d3ee;
+box-shadow:0 0 0 2px rgba(34,211,238,0.2);
+transform: scale(1.02);
 }
 
-/* button */
+/* ===============================
+BUTTONS
+=============================== */
 
-.btn-primary{
-width:100%;
-padding:12px;
-background:#22d3ee;
+.btn-primary,
+.nav-buttons button,
+.btn-info{
+background: linear-gradient(135deg,#22d3ee,#06b6d4);
 border:none;
-border-radius:8px;
+border-radius:10px;
 font-weight:600;
 color:#020617;
-margin-top:10px;
 }
 
-.btn-primary:hover{
-background:#06b6d4;
+.btn-primary:hover,
+.nav-buttons button:hover,
+.btn-info:hover{
+transform: translateY(-2px) scale(1.03);
+box-shadow:0 10px 25px rgba(34,211,238,0.4);
 }
 
-/* bottom text */
-
-.switch{
-margin-top:20px;
-font-size:14px;
-color:#94a3b8;
+.btn-primary:active{
+transform: scale(0.97);
 }
 
-.switch a{
-color:#22d3ee;
-text-decoration:none;
+/* ===============================
+PROGRESS BAR
+=============================== */
+
+.progress{
+height:10px;
+border-radius:20px;
+background: rgba(255,255,255,0.05);
+overflow:hidden;
 }
 
-.progress {
-height: 10px;
-border-radius: 20px;
+.progress-bar{
+border-radius:20px;
+background: linear-gradient(90deg,#22d3ee,#06b6d4);
+box-shadow:0 0 12px rgba(34,211,238,0.6);
+animation: progressGlow 2s infinite alternate;
 }
 
-.progress-bar {
-border-radius: 20px;
+@keyframes progressGlow{
+from{box-shadow:0 0 6px rgba(34,211,238,0.4);}
+to{box-shadow:0 0 16px rgba(34,211,238,0.8);}
 }
-.test-wrapper{
+
+/* ===============================
+TEST PAGE
+=============================== */
+
+.test-wrapper,
+.result-wrapper{
 display:flex;
 justify-content:center;
 align-items:center;
 min-height:100vh;
 }
 
-.test-card{
-width:720px;
-background:#111827;
+.test-card,
+.result-card{
+width:100%;
+max-width:720px;
 padding:40px;
-border-radius:16px;
-box-shadow:0 20px 60px rgba(0,0,0,0.6);
 }
 
 .progress-header{
 color:#94a3b8;
 margin-bottom:25px;
+font-size:14px;
 }
 
 .question-title{
 color:#22d3ee;
+font-size:22px;
 margin-bottom:8px;
 }
 
@@ -133,27 +199,38 @@ color:#cbd5f5;
 margin-bottom:25px;
 }
 
+/* ===============================
+ANSWER CARDS
+=============================== */
+
 .answer-grid{
 display:grid;
 grid-template-columns:1fr 1fr;
-gap:12px;
+gap:14px;
 }
 
 .answer-card{
-background:#020617;
-border:1px solid #1e293b;
-padding:14px;
-border-radius:8px;
+background: rgba(2,6,23,0.7);
+border:1px solid rgba(255,255,255,0.08);
+padding:16px;
+border-radius:12px;
 cursor:pointer;
 }
 
 .answer-card:hover{
 border-color:#22d3ee;
+transform: translateY(-3px);
+box-shadow:0 10px 30px rgba(0,0,0,0.5);
 }
 
-.answer-card input{
-margin-right:8px;
+.answer-card.selected{
+border:2px solid #22d3ee;
+box-shadow:0 0 15px rgba(34,211,238,0.6);
 }
+
+/* ===============================
+NAV BUTTONS
+=============================== */
 
 .nav-buttons{
 margin-top:30px;
@@ -161,47 +238,25 @@ display:flex;
 justify-content:space-between;
 }
 
-.nav-buttons button{
-padding:10px 18px;
-border:none;
-border-radius:6px;
-background:#22d3ee;
-color:#020617;
-font-weight:600;
-}
-
-.result-wrapper{
-display:flex;
-justify-content:center;
-align-items:center;
-min-height:100vh;
-}
-
-.result-card{
-width:700px;
-background:#111827;
-padding:40px;
-border-radius:16px;
-box-shadow:0 20px 60px rgba(0,0,0,0.6);
-}
+/* ===============================
+RESULT
+=============================== */
 
 .score-box{
 text-align:center;
-padding:20px;
-border-radius:12px;
-background:#020617;
-margin-bottom:20px;
+padding:25px;
+border-radius:14px;
+background: rgba(2,6,23,0.8);
 }
 
-.answer-card.selected{
-border:2px solid #22d3ee;
-background:#020617;
-}
+/* ===============================
+HINTS
+=============================== */
 
 .hint-card{
-background:#020617;
-border:1px solid #1e293b;
-border-radius:10px;
+background: rgba(2,6,23,0.7);
+border:1px solid rgba(255,255,255,0.08);
+border-radius:12px;
 padding:20px;
 }
 
@@ -213,4 +268,19 @@ margin-bottom:10px;
 .hint-list{
 padding-left:18px;
 color:#94a3b8;
+}
+
+/* ===============================
+ANIMATIONS
+=============================== */
+
+@keyframes fadeIn{
+from{
+opacity:0;
+transform: translateY(10px);
+}
+to{
+opacity:1;
+transform: translateY(0);
+}
 }
