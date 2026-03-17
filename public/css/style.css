@@ -284,3 +284,54 @@ opacity:1;
 transform: translateY(0);
 }
 }
+
+/* ===============================
+GLASS NAVBAR
+=============================== */
+
+.glass-nav{
+position:sticky;
+top:0;
+z-index:1000;
+
+background: rgba(2,6,23,0.6);
+backdrop-filter: blur(14px);
+border-bottom:1px solid rgba(255,255,255,0.05);
+
+padding:10px 0;
+}
+
+.glass-nav .nav-link{
+font-size:14px;
+opacity:0.8;
+}
+
+.glass-nav .nav-link:hover{
+opacity:1;
+color:#22d3ee !important;
+}
+
+/* ===============================
+FOOTER
+=============================== */
+
+.footer-glass{
+background: rgba(2,6,23,0.6);
+backdrop-filter: blur(12px);
+border-top:1px solid rgba(255,255,255,0.05);
+margin-top:60px;
+}
+
+/* ===============================
+PAGE SPACING FIX
+=============================== */
+
+body{
+display:flex;
+flex-direction:column;
+min-height:100vh;
+}
+
+.container{
+flex:1;
+}
