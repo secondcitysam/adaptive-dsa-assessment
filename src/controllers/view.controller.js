@@ -101,9 +101,8 @@ exports.dashboardPage = async (req, res) => {
 
   user.topicPerformance = topicPerformance;
 
-  res.render("dashboard", {
-    user
-  });
+  res.render("dashboard", { user });
+
 };
 
 
