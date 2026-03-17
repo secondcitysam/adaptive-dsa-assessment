@@ -14,6 +14,23 @@ require("../models/topicPerformance.model");
 
 
 /* ======================
+ALL TOPICS (MASTER LIST)
+====================== */
+
+const ALL_TOPICS = [
+  "Two Pointer",
+  "HashMap",
+  "Prefix Sum",
+  "Sliding Window",
+  "Kadane",
+  "Math",
+  "String Manipulation",
+  "Bit Manipulation",
+  "Linked List"
+];
+
+
+/* ======================
 AUTH PAGES
 ====================== */
 
@@ -72,6 +89,35 @@ exports.registerUser = async (req,res)=>{
 
 
 /* ======================
+BUILD TOPIC OBJECT (FIX CORE BUG)
+====================== */
+
+const buildTopicPerformance = (rows) => {
+
+  const topicPerformance = {};
+
+  // initialize ALL topics
+  ALL_TOPICS.forEach(topic => {
+    topicPerformance[topic] = {
+      correct: 0,
+      total: 0
+    };
+  });
+
+  // override with DB values
+  rows.forEach(row => {
+    topicPerformance[row.topic] = {
+      correct: row.correct,
+      total: row.total
+    };
+  });
+
+  return topicPerformance;
+};
+
+
+
+/* ======================
 DASHBOARD
 ====================== */
 
@@ -90,16 +136,7 @@ exports.dashboardPage = async (req, res) => {
     [userId]
   );
 
-  const topicPerformance = {};
-
-  result.rows.forEach(row => {
-    topicPerformance[row.topic] = {
-      correct: row.correct,
-      total: row.total
-    };
-  });
-
-  user.topicPerformance = topicPerformance;
+  user.topicPerformance = buildTopicPerformance(result.rows);
 
   res.render("dashboard", { user });
 
@@ -144,31 +181,20 @@ exports.resultPage = async (req,res)=>{
     [user.id]
   );
 
-  const topicPerformance = {};
-
-  result.rows.forEach(row => {
-    topicPerformance[row.topic] = {
-      correct: row.correct,
-      total: row.total
-    };
-  });
-
-  user.topicPerformance = topicPerformance;
+  user.topicPerformance = buildTopicPerformance(result.rows);
 
   const weakTopics = [];
 
-  Object.keys(user.topicPerformance || {}).forEach(topic => {
+  Object.keys(user.topicPerformance).forEach(topic => {
 
     const data = user.topicPerformance[topic];
 
-    if(data.total > 0){
+    const accuracy =
+      data.total === 0 ? 0 : data.correct / data.total;
 
-      const accuracy = data.correct / data.total;
-
-      if(accuracy < 0.5){
-        weakTopics.push(topic);
-      }
-
+    // FIXED LOGIC
+    if(data.total === 0 || accuracy < 0.5){
+      weakTopics.push(topic);
     }
 
   });
@@ -240,8 +266,6 @@ exports.startTest = async (req,res)=>{
     ...others.slice(0,1)
   ];
 
-  /* ensure minimum 3 questions */
-
   if(selectedQuestions.length < 3){
 
     const remaining = questions.filter(
@@ -285,20 +309,11 @@ exports.submitTest = async (req,res)=>{
   const user = await UserModel.findUserById(test.userId);
 
   const result = await pool.query(
-  "SELECT topic, correct, total FROM topic_performance WHERE user_id=$1",
-  [user.id]
-);
+    "SELECT topic, correct, total FROM topic_performance WHERE user_id=$1",
+    [user.id]
+  );
 
-const topicPerformance = {};
-
-result.rows.forEach(row => {
-  topicPerformance[row.topic] = {
-    correct: row.correct,
-    total: row.total
-  };
-});
-
-user.topicPerformance = topicPerformance;
+  user.topicPerformance = buildTopicPerformance(result.rows);
 
   const answers = [];
 
