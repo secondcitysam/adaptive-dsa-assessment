@@ -1,8 +1,8 @@
+const pool = require("../database/db");
 
+const updateTopicPerformance = async (userId, questions, answers) => {
 
-const updateTopicPerformance = (user, questions, answers) => {
-
-  questions.forEach(question => {
+  for (const question of questions) {
 
     const topic = question.topic;
 
@@ -10,42 +10,27 @@ const updateTopicPerformance = (user, questions, answers) => {
       a => a.questionId === question.id
     );
 
-    if (!user.topicPerformance[topic]) return;
+    const isCorrect =
+      submitted && submitted.answer === question.correctAnswer;
 
-    user.topicPerformance[topic].total++;
+    // upsert logic
+    await pool.query(`
+      INSERT INTO topic_performance (user_id, topic, correct, total)
+      VALUES ($1, $2, $3, 1)
+      ON CONFLICT (user_id, topic)
+      DO UPDATE SET
+        total = topic_performance.total + 1,
+        correct = topic_performance.correct + $3
+    `, [
+      userId,
+      topic,
+      isCorrect ? 1 : 0
+    ]);
 
-    if (
-      submitted &&
-      submitted.answer === question.correctAnswer
-    ) {
-      user.topicPerformance[topic].correct++;
-    }
-  });
-};
+  }
 
-
-
-const getWeakTopics = (user) => {
-  const performance = user.topicPerformance;
-
-  const topicScores = Object.keys(performance).map(topic => {
-
-    const data = performance[topic];
-
-    const accuracy =
-      data.total === 0
-        ? 1
-        : data.correct / data.total;
-
-    return { topic, accuracy };
-  });
-
-  topicScores.sort((a, b) => a.accuracy - b.accuracy);
-
-  return topicScores.slice(0, 2).map(t => t.topic);
 };
 
 module.exports = {
-  updateTopicPerformance,
-  getWeakTopics
+  updateTopicPerformance
 };

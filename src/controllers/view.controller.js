@@ -193,7 +193,7 @@ exports.resultPage = async (req,res)=>{
       data.total === 0 ? 0 : data.correct / data.total;
 
     // FIXED LOGIC
-    if(data.total === 0 || accuracy < 0.5){
+   if(data.total > 0 && accuracy < 0.5){
       weakTopics.push(topic);
     }
 
@@ -255,16 +255,28 @@ exports.startTest = async (req,res)=>{
   let others =
     questions.filter(q => !weakTopics.includes(q.topic));
 
-  const shuffle = arr =>
-    arr.sort(() => Math.random() - 0.5);
+const shuffle = (arr) => {
+  for(let i = arr.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+};
 
   prioritized = shuffle(prioritized);
   others = shuffle(others);
 
-  let selectedQuestions = [
-    ...prioritized.slice(0,2),
-    ...others.slice(0,1)
+let selectedQuestions = [];
+
+if(prioritized.length >= 2){
+  selectedQuestions = [
+    prioritized[0],
+    prioritized[1],
+    others[0]
   ];
+} else {
+  selectedQuestions = shuffle(questions).slice(0,3);
+}
 
   if(selectedQuestions.length < 3){
 
@@ -351,12 +363,8 @@ exports.submitTest = async (req,res)=>{
       test.previousDifficulty,
       percentage
     );
-
-  updateTopicPerformance(
-    user,
-    test.questions,
-    answers
-  );
+    
+await updateTopicPerformance(user.id, test.questions, answers);
 
   await UserModel.updateDifficulty(
     user.id,
