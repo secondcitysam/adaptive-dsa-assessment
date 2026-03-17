@@ -1,4 +1,5 @@
 const UserModel = require('../models/user.model');
+const pool = require('../database/db');
 
 const { getHintForTopic } = require('../utils/patternHints.utils');
 
@@ -10,6 +11,7 @@ const { updateTopicPerformance } = require('../utils/topicAdaptive.utils');
 
 const { getWeakTopics } =
 require("../models/topicPerformance.model");
+
 
 /* ======================
 AUTH PAGES
@@ -81,8 +83,23 @@ exports.dashboardPage = async (req, res) => {
     return res.redirect('/');
   }
 
-  const user =
-    await UserModel.findUserById(userId);
+  const user = await UserModel.findUserById(userId);
+
+  const result = await pool.query(
+    "SELECT topic, correct, total FROM topic_performance WHERE user_id=$1",
+    [userId]
+  );
+
+  const topicPerformance = {};
+
+  result.rows.forEach(row => {
+    topicPerformance[row.topic] = {
+      correct: row.correct,
+      total: row.total
+    };
+  });
+
+  user.topicPerformance = topicPerformance;
 
   res.render("dashboard", {
     user
@@ -125,6 +142,22 @@ exports.resultPage = async (req,res)=>{
 
   const user =
     await UserModel.findUserById(test.userId);
+
+  const result = await pool.query(
+    "SELECT topic, correct, total FROM topic_performance WHERE user_id=$1",
+    [user.id]
+  );
+
+  const topicPerformance = {};
+
+  result.rows.forEach(row => {
+    topicPerformance[row.topic] = {
+      correct: row.correct,
+      total: row.total
+    };
+  });
+
+  user.topicPerformance = topicPerformance;
 
   const weakTopics = [];
 
@@ -174,7 +207,6 @@ exports.logout = (req, res) => {
 /* ======================
 START TEST
 ====================== */
-
 
 exports.startTest = async (req,res)=>{
 
@@ -227,6 +259,9 @@ exports.startTest = async (req,res)=>{
   res.redirect(`/test/${test.id}`);
 
 };
+
+
+
 /* ======================
 SUBMIT TEST
 ====================== */
