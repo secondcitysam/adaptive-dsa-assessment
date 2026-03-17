@@ -2,10 +2,11 @@
 
 <div class="container py-5">
 
-<div class="d-flex justify-content-between mb-4">
+<!-- HEADER -->
+<div class="d-flex justify-content-between align-items-center mb-4">
 
 <h2 class="text-light">
-Welcome <%= user.username %>
+Welcome <span class="text-info"><%= user.username %></span>
 </h2>
 
 <form action="/logout" method="POST">
@@ -16,29 +17,47 @@ Logout
 
 </div>
 
-<div class="card bg-dark border-0 p-4 mb-4">
+
+<!-- CARD -->
+<div class="card bg-dark border-0 p-4 mb-4 shadow">
 
 <h4 class="mb-4 text-info">
 Algorithm Pattern Skills
 </h4>
 
 <% Object.keys(user.topicPerformance).forEach(topic => { 
+
 const data = user.topicPerformance[topic];
-const percent = data.total === 0 ? 0 : Math.floor((data.correct / data.total) * 100);
+
+const percent = data.total === 0 
+  ? 0 
+  : Math.floor((data.correct / data.total) * 100);
+
 %>
 
-<div class="mb-3">
+<div class="mb-4">
 
-<div class="d-flex justify-content-between">
-<span><%= topic %></span>
-<span><%= percent %>%</span>
+<!-- LABEL + PERCENT -->
+<div class="d-flex justify-content-between text-light mb-1">
+
+<span class="fw-semibold">
+<%= topic %>
+</span>
+
+<span class="text-info fw-bold">
+<%= percent %>%
+</span>
+
 </div>
 
-<div class="progress bg-secondary">
+<!-- PROGRESS BAR -->
+<div class="progress bg-secondary rounded-pill" style="height: 10px;">
+
 <div 
-class="progress-bar bg-info"
+class="progress-bar bg-info progress-bar-striped progress-bar-animated"
 style="width: <%= percent %>%">
 </div>
+
 </div>
 
 </div>
@@ -47,11 +66,13 @@ style="width: <%= percent %>%">
 
 </div>
 
+
+<!-- CTA -->
 <div class="text-center">
 
 <form action="/start-test" method="POST">
     
-<button class="btn btn-lg btn-info px-5">
+<button class="btn btn-lg btn-info px-5 fw-bold shadow">
 Start Adaptive Test
 </button>
 
