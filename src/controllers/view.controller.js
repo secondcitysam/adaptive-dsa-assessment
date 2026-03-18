@@ -148,17 +148,22 @@ exports.dashboardPage = async (req, res) => {
 TEST PAGE
 ====================== */
 
-exports.testPage = (req,res)=>{
+exports.testPage = async (req, res) => {
 
   const testId = req.params.id;
 
   const test = TestModel.findTestById(testId);
 
-  if(!test){
+  if (!test) {
     return res.redirect("/dashboard");
   }
 
-  res.render("test",{ test });
+  const user = await UserModel.findUserById(test.userId);
+
+  res.render("test", {
+    test,
+    user   // 🔥 FIX
+  });
 
 };
 
