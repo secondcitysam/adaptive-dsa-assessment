@@ -13,7 +13,6 @@ const updateTopicPerformance = async (userId, questions, answers) => {
     const isCorrect =
       submitted && submitted.answer === question.correctAnswer;
 
-    // upsert logic
     await pool.query(`
       INSERT INTO topic_performance (user_id, topic, correct, total)
       VALUES ($1, $2, $3, 1)

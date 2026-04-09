@@ -8,7 +8,7 @@ const getWeakTopics = async (userId) => {
     WHERE user_id = $1
   `, [userId]);
 
-  // prioritize low accuracy ONLY if attempted
+
   const scored = result.rows
     .filter(r => r.total > 0)
     .map(r => ({

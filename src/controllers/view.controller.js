@@ -13,9 +13,6 @@ const { getWeakTopics } =
 require("../models/topicPerformance.model");
 
 
-/* ======================
-ALL TOPICS (MASTER LIST)
-====================== */
 
 const ALL_TOPICS = [
   "Two Pointer",
@@ -30,9 +27,7 @@ const ALL_TOPICS = [
 ];
 
 
-/* ======================
-AUTH PAGES
-====================== */
+
 
 exports.loginPage = (req, res) => {
   res.render('login');
@@ -43,10 +38,6 @@ exports.registerPage = (req, res) => {
 };
 
 
-
-/* ======================
-LOGIN USER
-====================== */
 
 exports.loginUser = async (req,res)=>{
 
@@ -66,9 +57,6 @@ exports.loginUser = async (req,res)=>{
 
 
 
-/* ======================
-REGISTER USER
-====================== */
 
 exports.registerUser = async (req,res)=>{
 
@@ -88,15 +76,12 @@ exports.registerUser = async (req,res)=>{
 
 
 
-/* ======================
-BUILD TOPIC OBJECT (FIX CORE BUG)
-====================== */
 
 const buildTopicPerformance = (rows) => {
 
   const topicPerformance = {};
 
-  // initialize ALL topics
+
   ALL_TOPICS.forEach(topic => {
     topicPerformance[topic] = {
       correct: 0,
@@ -104,7 +89,7 @@ const buildTopicPerformance = (rows) => {
     };
   });
 
-  // override with DB values
+
   rows.forEach(row => {
     topicPerformance[row.topic] = {
       correct: row.correct,
@@ -117,9 +102,7 @@ const buildTopicPerformance = (rows) => {
 
 
 
-/* ======================
-DASHBOARD
-====================== */
+
 
 exports.dashboardPage = async (req, res) => {
 
@@ -144,9 +127,7 @@ exports.dashboardPage = async (req, res) => {
 
 
 
-/* ======================
-TEST PAGE
-====================== */
+
 
 exports.testPage = async (req, res) => {
 
@@ -169,9 +150,7 @@ exports.testPage = async (req, res) => {
 
 
 
-/* ======================
-RESULT PAGE
-====================== */
+
 
 exports.resultPage = async (req,res)=>{
 
@@ -197,7 +176,7 @@ exports.resultPage = async (req,res)=>{
     const accuracy =
       data.total === 0 ? 0 : data.correct / data.total;
 
-    // FIXED LOGIC
+
    if(data.total > 0 && accuracy < 0.5){
       weakTopics.push(topic);
     }
@@ -219,9 +198,6 @@ exports.resultPage = async (req,res)=>{
 
 
 
-/* ======================
-LOGOUT
-====================== */
 
 exports.logout = (req, res) => {
   req.session.destroy(() => {
@@ -231,9 +207,7 @@ exports.logout = (req, res) => {
 
 
 
-/* ======================
-START TEST
-====================== */
+
 
 exports.startTest = async (req,res)=>{
 
@@ -309,9 +283,8 @@ if(prioritized.length >= 2){
 
 
 
-/* ======================
-SUBMIT TEST
-====================== */
+
+
 
 exports.submitTest = async (req,res)=>{
 

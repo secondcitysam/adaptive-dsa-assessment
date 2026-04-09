@@ -11,9 +11,6 @@ const {
 } = require('../utils/topicAdaptive.utils');
 
 
-/* ===============================
-START TEST
-=============================== */
 
 exports.startTest = async (req, res, next) => {
   try {
@@ -93,9 +90,6 @@ exports.startTest = async (req, res, next) => {
 
 
 
-/* ===============================
-SUBMIT TEST
-=============================== */
 
 exports.submitTest = async (req, res, next) => {
   try {

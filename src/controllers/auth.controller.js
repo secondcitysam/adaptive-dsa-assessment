@@ -1,9 +1,6 @@
 const UserModel = require('../models/user.model');
 
 
-/* =========================
-REGISTER USER
-========================= */
 
 exports.registerUser = async (req, res, next) => {
   try {
@@ -46,9 +43,6 @@ exports.registerUser = async (req, res, next) => {
 
 
 
-/* =========================
-LOGIN USER
-========================= */
 
 exports.loginUser = async (req, res, next) => {
   try {
@@ -81,9 +75,7 @@ exports.loginUser = async (req, res, next) => {
 
 
 
-/* =========================
-UPDATE PASSWORD
-========================= */
+
 
 exports.updatePassword = async (req, res, next) => {
   try {
@@ -119,9 +111,7 @@ exports.updatePassword = async (req, res, next) => {
 
 
 
-/* =========================
-GET PERFORMANCE
-========================= */
+
 
 exports.getPerformance = async (req, res, next) => {
   try {
