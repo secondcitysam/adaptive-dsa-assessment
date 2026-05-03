@@ -25,7 +25,7 @@ const ALL_TOPICS = [
   "Bit Manipulation",
   "Linked List"
 ];
-
+expalin
 
 
 
@@ -200,11 +200,24 @@ exports.resultPage = async (req,res)=>{
 
 
 exports.logout = (req, res) => {
-  req.session.destroy(() => {
-    res.redirect('/');
-  });
-};
 
+  if (!req.session) {
+    return res.redirect('/');
+  }
+
+  req.session.destroy((err) => {
+    if (err) {
+      console.error("Logout Error:", err);
+      return res.redirect('/dashboard'); // fallback
+    }
+
+    // Clear the cookie explicitly
+    res.clearCookie('connect.sid'); 
+
+    return res.redirect('/');
+  });
+
+};
 
 
 
